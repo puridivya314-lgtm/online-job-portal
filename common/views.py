@@ -13,15 +13,32 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .models import Message
 from .forms import MessageForm
+from django.http import HttpResponse
+from jobs.models import JobCategory, Job
 
 # Create your views here.
 
+def debug_data(request):
+    html = f"""
+    <h2>Categories: {JobCategory.objects.count()}</h2>
+    <h2>Jobs: {Job.objects.count()}</h2>
+    <hr>
+    """
+
+    for c in JobCategory.objects.all():
+        html += f"{c.id} - {c.name} ({c.jobs.count()} jobs)<br>"
+
+    return HttpResponse(html)
 
 class Home(TemplateView):
     template_name = 'common/home.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        print("HOME VIEW EXECUTED")
+        print(JobCategory.objects.count())
+        print(Job.objects.count())
+        
         context['jobs'] = Job.objects.all().order_by('-posted_at')[:6]
         context['categories'] = JobCategory.objects.prefetch_related('jobs')[:8]
         context['locations'] = Job.objects.values('location').distinct()

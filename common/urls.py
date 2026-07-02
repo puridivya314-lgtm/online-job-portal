@@ -5,6 +5,7 @@ from django.conf.urls.static import static
 from common.views import *
 urlpatterns = [
 
+    path("debug-data/", debug_data, name="debug_data"),
     path("social-media/", SocialMedia.as_view(), name="social_media"),
     path("about/", About.as_view(), name="about"),
     path("faqs", FAQ.as_view(), name="faq"),
